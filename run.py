@@ -16,9 +16,10 @@ def plot_results(predicted_data, true_data, save_file, id):
     ax.plot(true_data, label='True Data')
     plt.plot(predicted_data, label='Prediction')
     plt.legend()
-    plt.show()
-    save_fname = os.path.join(save_file, '%s-e%s.h5' % (dt.datetime.now().strftime('%m%d-%H%M%S'), str(id)))
+
+    save_fname = os.path.join(save_file, '%s-id%s' % (dt.datetime.now().strftime('%m%d-%H%M%S'), str(id)))
     plt.savefig(save_fname)
+    plt.show()
 
 def plot_results_multiple(predicted_data, true_data, prediction_len):
     fig = plt.figure(facecolor='white')
@@ -35,7 +36,7 @@ def plot_results_multiple(predicted_data, true_data, prediction_len):
 def main():
     configs = json.load(open('config.json', 'r'))
     if not os.path.exists(configs['model']['save_dir']): os.makedirs(configs['model']['save_dir'])
-    if not os.path.exists(configs['model']['data picture save dir']): os.makedirs(configs['model']['data picture save dir'])
+    if not os.path.exists(configs['data']['data picture save dir']): os.makedirs(configs['data']['data picture save dir'])
 
     data = DataLoader(
         os.path.join('data', configs['data']['filename']),
@@ -87,7 +88,12 @@ def main():
 
     #plot_results_multiple(predictions, y_test, configs['data']['sequence_length'])
     plot_results(predictions, y_test, configs['data']['data picture save dir'], configs['data']['id'])
-
+    with open("note.txt", 'w') as f:
+        f.write('\n%s-e%s.h5:\n' % (dt.datetime.now().strftime('%m%d-%H%M%S'), configs['data']['id']))
+        f.write("data split:%f\n" % configs["data"]["train_test_split"])
+        f.write("epochs:%d\n" % configs["training"]["epochs"])
+        f.write("batch size:%d\n" % configs["training"]["batch_size"])
+        f.write("notes:%s\n" % configs['data']['note'])
 
 if __name__ == '__main__':
     main()
