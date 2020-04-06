@@ -8,6 +8,13 @@ import matplotlib.pyplot as plt
 from core.data_processor import DataLoader
 from core.model import Model
 import datetime as dt
+from keras import backend
+
+def rmse(y_true, y_pred):
+    return backend.sqrt(backend.mean(backend.square(y_pred - y_true), axis=-1))
+
+def mse(y_true, y_pred):
+    return backend.mean(backend.square(y_pred - y_true), axis=-1)
 
 
 def plot_results(predicted_data, true_data, save_file, id):
@@ -86,13 +93,27 @@ def main():
     # predictions = model.predict_sequence_full(x_test, configs['data']['sequence_length'])
     predictions = model.predict_point_by_point(x_test)
 
+    sess = backend.get_session()
+
+    rmsee = backend.mean(rmse (y_test, predictions), axis=0)
+    msee = backend.mean(mse(y_test, predictions), axis=0)
+
+    with sess.as_default() :
+        mse_val = msee.eval()
+        rmse_val = rmsee.eval()
+        print ("mse:", mse_val)
+        print ("rmse:", rmse_val)
+
     #plot_results_multiple(predictions, y_test, configs['data']['sequence_length'])
     plot_results(predictions, y_test, configs['data']['data picture save dir'], configs['data']['id'])
-    with open("note.txt", 'w') as f:
+
+    with open("note.txt", 'a+') as f:
         f.write('\n%s-e%s.h5:\n' % (dt.datetime.now().strftime('%m%d-%H%M%S'), configs['data']['id']))
         f.write("data split:%f\n" % configs["data"]["train_test_split"])
         f.write("epochs:%d\n" % configs["training"]["epochs"])
         f.write("batch size:%d\n" % configs["training"]["batch_size"])
+        f.write("mse:%f\n" % mse_val)
+        f.write("rmse:%f\n" % rmse_val)
         f.write("notes:%s\n" % configs['data']['note'])
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 {
 	"data": {
 		"filename": "a_data.csv",
-		"id": 154,
+		"id": 153,
 		"columns": [
             "ele"
 		],
@@ -9,10 +9,10 @@
 		"train_test_split": 0.7,
 		"normalise": true,
 		"data picture save dir": "picture",
-		"note": "中文"
+		"note": "测试"
 	},
 	"training": {
-		"epochs": 5,
+		"epochs": 1,
 		"batch_size": 64
 	},
 	"model": {
