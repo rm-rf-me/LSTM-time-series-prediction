@@ -1,7 +1,4 @@
-__author__ = "Jakob Aungiers"
-__copyright__ = "Jakob Aungiers 2018"
-__version__ = "2.0.0"
-__license__ = "MIT"
+__author__ = "liou"
 
 import os
 import json
@@ -10,16 +7,18 @@ import math
 import matplotlib.pyplot as plt
 from core.data_processor import DataLoader
 from core.model import Model
+import datetime as dt
 
 
-def plot_results(predicted_data, true_data):
+def plot_results(predicted_data, true_data, save_file, id):
     fig = plt.figure(facecolor='white')
     ax = fig.add_subplot(111)
     ax.plot(true_data, label='True Data')
     plt.plot(predicted_data, label='Prediction')
     plt.legend()
     plt.show()
-
+    save_fname = os.path.join(save_file, '%s-e%s.h5' % (dt.datetime.now().strftime('%m%d-%H%M%S'), str(id)))
+    plt.savefig(save_fname)
 
 def plot_results_multiple(predicted_data, true_data, prediction_len):
     fig = plt.figure(facecolor='white')
@@ -36,11 +35,13 @@ def plot_results_multiple(predicted_data, true_data, prediction_len):
 def main():
     configs = json.load(open('config.json', 'r'))
     if not os.path.exists(configs['model']['save_dir']): os.makedirs(configs['model']['save_dir'])
+    if not os.path.exists(configs['model']['data picture save dir']): os.makedirs(configs['model']['data picture save dir'])
 
     data = DataLoader(
         os.path.join('data', configs['data']['filename']),
         configs['data']['train_test_split'],
-        configs['data']['columns']
+        configs['data']['columns'],
+        configs['data']['id']
     )
 
     model = Model()
@@ -85,7 +86,7 @@ def main():
     predictions = model.predict_point_by_point(x_test)
 
     #plot_results_multiple(predictions, y_test, configs['data']['sequence_length'])
-    plot_results(predictions, y_test)
+    plot_results(predictions, y_test, configs['data']['data picture save dir'], configs['data']['id'])
 
 
 if __name__ == '__main__':

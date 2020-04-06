@@ -1,14 +1,15 @@
 {
 	"data": {
-		"filename": "153.csv",
-		"id": 0,
+		"filename": "a_data.csv",
+		"id": 154,
 		"columns": [
-            "ele",
-			"timestamp"
+            "ele"
 		],
 		"sequence_length": 100,
 		"train_test_split": 0.7,
-		"normalise": true
+		"normalise": true,
+		"data picture save dir": "picture",
+		"note": "中文"
 	},
 	"training": {
 		"epochs": 5,
@@ -23,7 +24,7 @@
 				"type": "lstm",
 				"neurons": 100,
 				"input_timesteps": 99,
-				"input_dim": 2,
+				"input_dim": 1,
 				"return_seq": true
 			},
 			{

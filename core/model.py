@@ -61,7 +61,7 @@ class Model():
 			batch_size=batch_size,
 			callbacks=callbacks
 		)
-		self.model.save(save_fname)
+		#self.model.save(save_fname)
 
 		print('[Model] Training Completed. Model saved as %s' % save_fname)
 		timer.stop()

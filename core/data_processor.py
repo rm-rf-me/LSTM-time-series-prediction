@@ -3,19 +3,25 @@ import numpy as np
 import pandas as pd
 import time
 import datetime
+import json
 
 class DataLoader():
     """A class for loading and transforming data for the lstm model"""
 
-    def __init__(self, filename, split, cols):
+    def __init__(self, filename, split, cols, id):
         dataframe = pd.read_csv(filename)
+
+        if id != 0 :
+            dataframe = dataframe[dataframe['id']==id]
+        dataframe['timestamp'] = dataframe['time'].apply(lambda x: time.mktime(time.strptime(x, '%M:%S.%f')))
+        print ("data shape:", dataframe.shape)
+
         i_split = int(len(dataframe) * split)
 
-
-        dataframe['timestamp'] = dataframe['time2'].apply(lambda x: time.mktime(time.strptime(x, '%M:%S.%f')))
-        dataframe.head(5)
         self.data_train = dataframe.get(cols).values[:i_split]
         self.data_test  = dataframe.get(cols).values[i_split:]
+        print ("train data shape:", self.data_train.shape)
+        print ("test data shape:", self.data_test.shape)
         self.len_train  = len(self.data_train)
         self.len_test   = len(self.data_test)
         self.len_train_windows = None
@@ -33,6 +39,7 @@ class DataLoader():
         data_windows = np.array(data_windows).astype(float)
         data_windows = self.normalise_windows(data_windows, single_window=False) if normalise else data_windows
 
+        print ("test data windows shape:", data_windows.shape)
         x = data_windows[:, :-1]
         y = data_windows[:, -1, [0]]
 
